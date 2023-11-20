@@ -17,7 +17,7 @@ app.use(express.json());
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://The-Learn-Cloud-job-task:${process.env.DB_PASSWORD}@cluster0.pwifs1n.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -35,6 +35,68 @@ async function run() {
 
     const theLearnCloudJobTaskDB = client.db("the-learn-cloud-job-task")
     const todoCollection = theLearnCloudJobTaskDB.collection("todoCollection")
+
+    //getting todos
+    app.get("/", async (req, res) => {
+      const result = await todoCollection
+        .find({})
+        .toArray();
+      res.send(result);
+    });
+
+    //posting todo.
+    app.post("/addTodo", async (req, res) => {
+      const body = req.body;
+      body.createdAt = new Date();
+      body.status = "uncompleted"
+      // console.log(body);
+      const result = await todoCollection.insertOne(body);
+      if (result?.insertedId) {
+        return res.status(200).send(result);
+      } else {
+        return res.status(404).send({
+          message: "can not insert try again leter",
+          status: false,
+        });
+      }
+    });
+
+
+
+
+
+
+
+
+
+    app.put('/updateOrder', async (req, res) => {
+      const { newOrder } = req.body;
+    
+      // console.log('Received new order:', newOrder);
+    
+      try {
+        // Iterate through the new order array and update the order for each item
+        for (let i = 0; i < newOrder.length; i++) {
+          const itemId = newOrder[i];
+          const realId = {_id: new ObjectId(itemId)}
+          console.log("here is id",itemId);
+          const updatedDoc = {$set: {order: Number(i)+1}}
+          console.log("Before");
+          const result = await todoCollection.updateOne(realId,updatedDoc)
+          console.log("After");
+        }
+    
+        // console.log("success");
+        res.status(200).json({ message: 'Order updated successfully' });
+      } catch (error) {
+        console.error('Error updating order:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+
+
+
+
 
 
 
