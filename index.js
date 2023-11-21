@@ -16,7 +16,7 @@ app.options("*", cors(corsConfig));
 app.use(express.json());
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const uri = `mongodb+srv://The-Learn-Cloud-job-task:${process.env.DB_PASSWORD}@cluster0.pwifs1n.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://The-Learn-Cloud-job-task:sRy7G3EmyTgjevUn@cluster0.pwifs1n.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
